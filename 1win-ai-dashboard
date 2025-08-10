@@ -1,0 +1,398 @@
+public class Main {
+    public static void main(String[] args){
+    //start coding
+    }
+}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>1Win — AI-style Prediction Dashboard (Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Mobile-first, online demo: AI-style prediction dashboard for 1win (entertainment only).">
+  <style>
+    :root{
+      --bg:#05060a;
+      --panel:#0b0f14;
+      --accent:#00d4ff; /* cyan */
+      --accent2:#7c4dff; /* violet */
+      --muted:#9aa6b2;
+      --glass: rgba(255,255,255,0.03);
+      --danger:#ff5c7c;
+      --success:#3af58f;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:linear-gradient(180deg, rgba(7,9,12,1) 0%, rgba(2,3,6,1) 100%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:18px;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+    }
+    .container{
+      width:100%;
+      max-width:920px;
+      border-radius:14px;
+      background: linear-gradient(180deg, rgba(11,15,20,0.6), rgba(6,8,12,0.6));
+      padding:18px;
+      box-shadow: 0 8px 40px rgba(6,10,14,0.6);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+    header{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .brand{
+      display:flex;gap:12px;align-items:center
+    }
+    .logo{
+      width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:#041018; font-size:18px;
+      box-shadow: 0 6px 20px rgba(124,77,255,0.12), 0 6px 30px rgba(0,212,255,0.06);
+    }
+    h1{font-size:16px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 380px;
+      gap:14px;
+    }
+    /* mobile-first: stack columns */
+    @media (max-width:880px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      padding:14px;border-radius:12px; border:1px solid rgba(255,255,255,0.02);
+    }
+
+    /* MAIN PREDICTION CARD */
+    .pred-card{display:flex;flex-direction:column;gap:12px;align-items:stretch}
+    .prediction-display{
+      display:flex;align-items:center;justify-content:space-between;padding:16px;border-radius:10px;background:linear-gradient(90deg, rgba(3,8,12,0.6), rgba(6,8,12,0.45));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .prediction-left{display:flex;gap:12px;align-items:center}
+    .ai-badge{width:64px;height:64px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#021018}
+    .pred-text{display:flex;flex-direction:column}
+    .pred-label{font-size:18px;font-weight:700;letter-spacing:0.6px}
+    .pred-sub{font-size:12px;color:var(--muted)}
+    .confidence{
+      width:160px;height:44px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));display:flex;flex-direction:column;align-items:center;justify-content:center;
+    }
+    .confidence .value{font-size:18px;font-weight:700}
+    .meter{width:120px;height:8px;background:rgba(255,255,255,0.04);border-radius:6px;margin-top:8px;overflow:hidden}
+    .meter .fill{height:100%;width:40%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:6px;transition:width .6s ease}
+
+    /* small log / chat area */
+    .log{height:120px;overflow:auto;padding:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+    .log .entry{font-size:13px;margin-bottom:8px;color:var(--muted)}
+    .log .entry strong{color:#e6f8ff}
+
+    /* History input */
+    textarea{width:100%;min-height:86px;background:transparent;border:1px dashed rgba(255,255,255,0.04);color:inherit;padding:10px;border-radius:8px;resize:vertical}
+    .controls{display:flex;gap:8px;flex-wrap:wrap}
+    button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:inherit;font-weight:600;cursor:pointer}
+    button.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#021018;border:0;box-shadow:0 8px 30px rgba(124,77,255,0.08)}
+    button.ghost{border:1px solid rgba(255,255,255,0.03)}
+    .small{padding:8px 10px;font-size:13px}
+
+    /* right column */
+    .sidebar .stat{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:8px;margin-bottom:8px}
+    .stat h3{margin:0;font-size:13px}
+    .stat p{margin:0;color:var(--muted);font-size:13px}
+
+    .disclaimer{font-size:12px;color:var(--muted);padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+
+    /* thinking animation */
+    .thinking{display:inline-block;height:18px}
+    .dot{display:inline-block;width:6px;height:6px;margin:0 3px;border-radius:50%;background:var(--accent);opacity:0.2;animation:blink 1.2s infinite}
+    .dot:nth-child(2){animation-delay:.12s}
+    .dot:nth-child(3){animation-delay:.24s}
+    @keyframes blink{50%{opacity:1;transform:translateY(-3px)} }
+
+    footer{margin-top:12px;color:var(--muted);font-size:12px;display:flex;justify-content:space-between;align-items:center}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">AI</div>
+        <div>
+          <h1>1Win — AI Prediction Dashboard (Demo)</h1>
+          <p class="lead">Mobile-first professional look. For entertainment & testing only — not a guarantee.</p>
+        </div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:12px;color:var(--muted)">Mode: <strong>Online Demo</strong></div>
+        <div style="font-size:12px;color:var(--muted)">Version: <strong>1.0</strong></div>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel pred-card">
+        <div class="prediction-display">
+          <div class="prediction-left">
+            <div class="ai-badge">⟠</div>
+            <div class="pred-text">
+              <div class="pred-label" id="predLabel">—</div>
+              <div class="pred-sub" id="predReason">Waiting for input or press START</div>
+            </div>
+          </div>
+          <div class="confidence">
+            <div class="value" id="predConf">—%</div>
+            <div class="meter"><div class="fill" id="meterFill" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="panel" style="padding:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+            <div style="flex:1">
+              <label style="font-size:13px;color:var(--muted);">Manual history input</label>
+              <textarea id="historyInput" placeholder="Paste recent rounds here (comma or space separated). Example: 1.5, 2.0, 1.12, 10.5"></textarea>
+              <div style="font-size:12px;color:var(--muted);margin-top:6px">Tip: enter crash multipliers or short notes. The demo will extract simple stats.</div>
+            </div>
+            <div style="width:120px;margin-left:12px;display:flex;flex-direction:column;gap:8px;align-items:stretch">
+              <button id="startBtn" class="primary">Start</button>
+              <button id="stopBtn" class="ghost small">Stop</button>
+              <button id="downloadBtn" class="small">Download .html</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="log" id="log">
+          <div class="entry"><strong>System:</strong> Dashboard ready. Press Start to simulate live predictions.</div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+          <button id="oneShotBtn" class="small">Generate One Prediction</button>
+          <button id="resetHistory" class="small">Clear History</button>
+          <button id="copyBtn" class="small">Copy HTML to Clipboard</button>
+        </div>
+
+      </section>
+
+      <aside class="panel sidebar">
+        <div class="stat" style="background:var(--glass)">
+          <div>
+            <h3>Last Result</h3>
+            <p id="lastResult">—</p>
+          </div>
+          <div style="text-align:right">
+            <h3 id="lastConf">—</h3>
+            <p style="color:var(--muted);font-size:12px">conf</p>
+          </div>
+        </div>
+
+        <div class="stat" style="background:var(--glass)">
+          <div>
+            <h3>Session Stats</h3>
+            <p id="sessionStats">Predictions: 0 | Hits: 0 (simulated)</p>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          <strong>Important:</strong>
+          <div style="margin-top:6px">This tool simulates predictions for entertainment & testing. 1win outcomes are random — this dashboard does not access or predict real game RNG.</div>
+        </div>
+
+        <div style="margin-top:10px">
+          <label style="font-size:13px;color:var(--muted)">Update interval (secs)</label>
+          <div style="display:flex;gap:6px;margin-top:6px">
+            <input id="intervalInput" type="number" value="4" min="1" style="width:80px;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit">
+            <select id="aggrMode" style="padding:8px;border-radius:8px;background:transparent;color:inherit;border:1px solid rgba(255,255,255,0.03)">
+              <option value="auto">Auto Model</option>
+              <option value="aggr">Aggressive</option>
+              <option value="conservative">Conservative</option>
+            </select>
+          </div>
+        </div>
+
+        <footer>
+          <div>Made for demo • Entertainment only</div>
+          <div style="font-size:11px;color:var(--muted)">v1.0</div>
+        </footer>
+      </aside>
+
+    </main>
+  </div>
+
+  <script>
+    // ------ Simple demo model (purely statistical + random noise) ------
+    // This model is intentionally simple: it uses recent history (if provided) to compute
+    // mean multiplier, volatility, and from that produces 'HIGH/LOW/SKIP' style signals.
+    // This is for entertainment only.
+
+    const predLabelEl = document.getElementById('predLabel');
+    const predReasonEl = document.getElementById('predReason');
+    const predConfEl = document.getElementById('predConf');
+    const meterFill = document.getElementById('meterFill');
+    const logEl = document.getElementById('log');
+    const lastResultEl = document.getElementById('lastResult');
+    const lastConfEl = document.getElementById('lastConf');
+    const sessionStatsEl = document.getElementById('sessionStats');
+
+    let intervalId = null;
+    let running = false;
+    let session = {count:0,hits:0};
+
+    function appendLog(html){
+      const d = document.createElement('div');
+      d.className = 'entry';
+      d.innerHTML = html;
+      logEl.prepend(d);
+    }
+
+    function parseHistory(input){
+      if(!input) return [];
+      // accept numbers (multipliers) e.g. 1.2 2 3.4 or free text - extract floats
+      const nums = input.match(/\d+(?:\.\d+)?/g);
+      if(!nums) return [];
+      return nums.map(n=>parseFloat(n)).filter(n=>!isNaN(n));
+    }
+
+    function computeStats(arr){
+      if(!arr || arr.length===0) return null;
+      const n = arr.length;
+      const mean = arr.reduce((s,x)=>s+x,0)/n;
+      const variance = arr.reduce((s,x)=>s+Math.pow(x-mean,2),0)/n;
+      const std = Math.sqrt(variance);
+      const median = arr.slice().sort((a,b)=>a-b)[Math.floor(n/2)];
+      const last = arr[arr.length-1];
+      return {n,mean,std,median,last};
+    }
+
+    function makePrediction(historyArr, mode='auto'){
+      // Return {label, confidence (0-100), reason}
+      // labels: BET_HIGH (go for multiplier > 2x), BET_LOW (cash out early), SKIP
+      // crude heuristics:
+      const base = {label:'SKIP',confidence:30,reason:'Insufficient data — default SKIP'};
+      if(!historyArr || historyArr.length<1) return base;
+      const s = computeStats(historyArr);
+      let conf = Math.min(90, Math.max(12, Math.round(50 + (s.mean-1.3)*15 - s.std*6 + (s.n-5)*1)));
+      // apply mode
+      if(mode==='aggr') conf = Math.min(98, conf + 8);
+      if(mode==='conservative') conf = Math.max(10, conf - 10);
+
+      // simple rule: if mean is high and volatility moderate -> BET_HIGH
+      if(s.mean >= 2.2 && s.std < s.mean*0.8){
+        return {label:'BET HIGH', confidence: Math.round(conf + 10), reason:`mean ${s.mean.toFixed(2)}, std ${s.std.toFixed(2)} — Favor higher multipliers`};
+      }
+      // if mean low but last had spike -> maybe SKIP or BET_LOW
+      if(s.mean < 1.6){
+        return {label:'BET LOW', confidence: Math.round(conf - 5), reason:`mean ${s.mean.toFixed(2)} — conservative: prefer low bets or early cashouts`};
+      }
+      // if mean moderate and volatility low -> opportunistic
+      if(s.mean>=1.6 && s.mean<2.2 && s.std < 0.6){
+        return {label:'BET HIGH (opportunistic)', confidence: Math.round(conf), reason:`mean ${s.mean.toFixed(2)}, low volatility`};
+      }
+      // fallback random-ish but weighted by mean
+      const rand = Math.random();
+      if(rand < Math.min(0.35, Math.max(0.05, (2.0 - s.mean)/2))){
+        return {label:'SKIP', confidence: Math.round(conf-10), reason:`Randomized skip (mean ${s.mean.toFixed(2)})`};
+      }
+      return {label:'BET LOW', confidence: Math.round(conf-2), reason:`Default fallback — mean ${s.mean.toFixed(2)}`};
+    }
+
+    function showThinking(){
+      predLabelEl.textContent = 'AI is thinking';
+      predReasonEl.innerHTML = '<span class="thinking"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
+    }
+
+    function renderPrediction(pred){
+      predLabelEl.textContent = pred.label;
+      predReasonEl.textContent = pred.reason;
+      predConfEl.textContent = pred.confidence + '%';
+      meterFill.style.width = Math.max(4, Math.min(100, pred.confidence)) + '%';
+    }
+
+    function generateAndDisplayOne(mode){
+      const raw = document.getElementById('historyInput').value;
+      const arr = parseHistory(raw);
+      const pred = makePrediction(arr, mode);
+      renderPrediction(pred);
+      appendLog(`<strong>Prediction:</strong> ${pred.label} — ${pred.confidence}% — ${pred.reason}`);
+      lastResultEl.textContent = pred.label;
+      lastConfEl.textContent = pred.confidence + '%';
+      session.count += 1;
+      sessionStatsEl.textContent = `Predictions: ${session.count} | Hits: ${session.hits} (simulated)`;
+    }
+
+    // CONTROL / INTERVAL
+    document.getElementById('startBtn').addEventListener('click', ()=>{
+      if(running) return;
+      const secs = Math.max(1, parseInt(document.getElementById('intervalInput').value || 4));
+      const mode = document.getElementById('aggrMode').value;
+      running = true;
+      appendLog('<strong>System:</strong> Live session started');
+      // immediate one
+      showThinking();
+      setTimeout(()=>{ generateAndDisplayOne(mode); }, 900 + Math.random()*800);
+      intervalId = setInterval(()=>{
+        showThinking();
+        // thinking time before reveal
+        setTimeout(()=>{ generateAndDisplayOne(mode); }, 900 + Math.random()*800);
+      }, secs*1000);
+    });
+
+    document.getElementById('stopBtn').addEventListener('click', ()=>{
+      if(intervalId) clearInterval(intervalId);
+      intervalId = null; running = false;
+      appendLog('<strong>System:</strong> Live session stopped');
+    });
+
+    document.getElementById('oneShotBtn').addEventListener('click', ()=>{
+      const mode = document.getElementById('aggrMode').value;
+      showThinking();
+      setTimeout(()=>{ generateAndDisplayOne(mode); }, 900 + Math.random()*800);
+    });
+
+    document.getElementById('resetHistory').addEventListener('click', ()=>{
+      document.getElementById('historyInput').value = '';
+      appendLog('<strong>System:</strong> History cleared');
+    });
+
+    // Copy HTML to clipboard (helps quick deploy)
+    document.getElementById('copyBtn').addEventListener('click', async ()=>{
+      try{
+        const html = document.documentElement.outerHTML;
+        await navigator.clipboard.writeText('<!doctype html>\n' + html);
+        appendLog('<strong>System:</strong> HTML copied to clipboard — paste into a new file on Netlify/GitHub Pages');
+      }catch(e){
+        appendLog('<strong>System:</strong> Copy failed — your browser may block clipboard access');
+      }
+    });
+
+    // Download .html file
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      const html = '<!doctype html>\n' + document.documentElement.outerHTML;
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = '1win-predictor-demo.html';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      appendLog('<strong>System:</strong> Download started — save the file and upload to GitHub or Netlify');
+    });
+
+    // basic safety: prevent realtime autoplay if on mobile data? just log
+    // initialise
+    appendLog('<strong>System:</strong> UI ready. Enter history or start live demo.');
+  </script>
+</body>
+</html>
